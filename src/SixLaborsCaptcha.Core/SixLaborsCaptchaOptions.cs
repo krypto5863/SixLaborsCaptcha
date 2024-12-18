@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using System.Runtime.InteropServices;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
@@ -6,6 +9,19 @@ namespace SixLaborsCaptcha.Core;
 
 public class SixLaborsCaptchaOptions
 {
+  public SixLaborsCaptchaOptions()
+  {
+    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+    {
+      return;
+    }
+
+    var collection = new FontCollection();
+    var family = collection.AddSystemFonts()
+      .Families.Take(Math.Min(collection.Families.Count(), 3));
+    FontFamilies = family.Select(fam => fam.Name).ToArray();
+  }
+
   /// <summary>
   /// Default fonts are  "Arial", "Verdana", "Times New Roman" in Windows
   /// Linux guys have to set their own fonts :)
